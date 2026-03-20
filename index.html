@@ -5,335 +5,148 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel Operacional</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      background: #08110c;
-      color: #e8fff2;
-      min-height: 100vh;
-    }
-
-    .hidden {
-      display: none !important;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { background: #08110c; color: #e8fff2; min-height: 100vh; }
+    .hidden { display: none !important; }
 
     .login-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: radial-gradient(circle at top, #13261c 0%, #08110c 55%);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 20px; background: radial-gradient(circle at top, #13261c 0%, #08110c 55%);
     }
 
     .login-box {
-      width: 100%;
-      max-width: 420px;
-      background: #0d1611;
-      border: 1px solid #1b3527;
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.28);
+      width: 100%; max-width: 420px; background: #0d1611; border: 1px solid #1b3527;
+      border-radius: 18px; padding: 24px; box-shadow: 0 16px 40px rgba(0,0,0,0.28);
     }
 
-    .login-box h1 {
-      color: #7dffb2;
-      font-size: 28px;
-      margin-bottom: 8px;
+    .login-box h1 { color: #7dffb2; font-size: 28px; margin-bottom: 8px; }
+    .login-box p { color: #9cb7a8; margin-bottom: 18px; font-size: 14px; }
+
+    .login-box input, .form input {
+      width: 100%; background: #09100c; border: 1px solid #264836; color: white;
+      padding: 14px; border-radius: 12px; outline: none;
     }
 
-    .login-box p {
-      color: #9cb7a8;
-      margin-bottom: 18px;
-      font-size: 14px;
-    }
+    .login-box input { margin-bottom: 12px; }
 
-    .login-box input {
-      width: 100%;
-      background: #09100c;
-      border: 1px solid #264836;
-      color: white;
-      padding: 14px;
-      border-radius: 12px;
-      outline: none;
-      margin-bottom: 12px;
-    }
-
-    .login-box button {
-      width: 100%;
+    .login-box button, .form button, .logout-btn {
       background: linear-gradient(180deg, #1d6f46, #145133);
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 4px;
+      color: white; border: none; padding: 14px; border-radius: 12px;
+      font-weight: bold; cursor: pointer;
     }
 
-    .login-error {
-      color: #ff98a8;
-      margin-top: 12px;
-      font-size: 14px;
-    }
+    .login-box button { width: 100%; margin-top: 4px; }
+    .login-error { color: #ff98a8; margin-top: 12px; font-size: 14px; }
 
     .demo {
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #0a120d;
-      border: 1px solid #213f2f;
-      color: #9cb7a8;
-      font-size: 13px;
-      line-height: 1.6;
+      margin-top: 16px; padding: 12px; border-radius: 12px; background: #0a120d;
+      border: 1px solid #213f2f; color: #9cb7a8; font-size: 13px; line-height: 1.6;
     }
 
     .topbar {
-      padding: 20px 16px;
-      border-bottom: 1px solid #173124;
-      background: #0c1711;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      padding: 20px 16px; border-bottom: 1px solid #173124; background: #0c1711;
+      position: sticky; top: 0; z-index: 10;
     }
 
     .topbar-wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
+      max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between;
+      gap: 12px; align-items: center;
     }
 
-    .topbar h1 {
-      font-size: 24px;
-      color: #7dffb2;
-      margin-bottom: 6px;
-    }
-
-    .topbar p {
-      color: #9db9aa;
-      font-size: 14px;
-    }
+    .topbar h1 { font-size: 24px; color: #7dffb2; margin-bottom: 6px; }
+    .topbar p { color: #9db9aa; font-size: 14px; }
 
     .logout-btn {
-      border: 1px solid #315742;
-      background: #101b15;
-      color: #d6ffe4;
-      padding: 10px 14px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
-      white-space: nowrap;
+      border: 1px solid #315742; background: #101b15; color: #d6ffe4;
+      padding: 10px 14px; white-space: nowrap;
     }
 
-    .container {
-      padding: 16px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
+    .container { padding: 16px; max-width: 1100px; margin: 0 auto; }
 
     .stats {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 18px;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 18px;
     }
 
     .card {
       background: linear-gradient(180deg, #101d16, #0c1510);
-      border: 1px solid #1d3c2d;
-      border-radius: 14px;
-      padding: 16px;
+      border: 1px solid #1d3c2d; border-radius: 14px; padding: 16px;
       box-shadow: 0 10px 24px rgba(0,0,0,0.22);
     }
 
-    .card span {
-      display: block;
-      color: #96b7a4;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .card strong {
-      font-size: 28px;
-      color: #7dffb2;
-    }
+    .card span { display: block; color: #96b7a4; font-size: 13px; margin-bottom: 8px; }
+    .card strong { font-size: 28px; color: #7dffb2; }
 
     .menu {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      margin-bottom: 18px;
-      padding-bottom: 4px;
+      display: flex; gap: 8px; overflow-x: auto; margin-bottom: 18px; padding-bottom: 4px;
     }
 
     .menu button {
-      border: 1px solid #244635;
-      background: #101b15;
-      color: #c9f7da;
-      padding: 10px 14px;
-      border-radius: 999px;
-      white-space: nowrap;
-      cursor: pointer;
+      border: 1px solid #244635; background: #101b15; color: #c9f7da;
+      padding: 10px 14px; border-radius: 999px; white-space: nowrap; cursor: pointer;
       font-weight: bold;
     }
 
     .menu button.active {
-      background: #123524;
-      border-color: #56db91;
-      color: #7dffb2;
+      background: #123524; border-color: #56db91; color: #7dffb2;
     }
 
     .panel {
-      background: #0d1611;
-      border: 1px solid #183223;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+      background: #0d1611; border: 1px solid #183223; border-radius: 16px;
+      padding: 16px; box-shadow: 0 10px 24px rgba(0,0,0,0.18);
     }
 
-    .panel-header {
-      margin-bottom: 14px;
-    }
-
-    .panel-header h2 {
-      color: #7dffb2;
-      font-size: 22px;
-      margin-bottom: 4px;
-    }
-
-    .panel-header p {
-      color: #93ae9f;
-      font-size: 14px;
-    }
+    .panel-header { margin-bottom: 14px; }
+    .panel-header h2 { color: #7dffb2; font-size: 22px; margin-bottom: 4px; }
+    .panel-header p { color: #93ae9f; font-size: 14px; }
 
     .role-bar {
-      margin-bottom: 14px;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #234634;
-      background: #0a120d;
-      color: #bdeccd;
-      font-size: 14px;
+      margin-bottom: 14px; padding: 12px; border-radius: 12px; border: 1px solid #234634;
+      background: #0a120d; color: #bdeccd; font-size: 14px;
     }
 
     .form {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 18px;
+      display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 18px;
     }
 
-    .form input {
-      width: 100%;
-      background: #09100c;
-      border: 1px solid #264836;
-      color: white;
-      padding: 13px 14px;
-      border-radius: 12px;
-      outline: none;
+    .form button:disabled, .remove-btn:disabled {
+      opacity: 0.45; cursor: not-allowed;
     }
 
-    .form button {
-      background: linear-gradient(180deg, #1d6f46, #145133);
-      color: white;
-      border: none;
-      padding: 13px 14px;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .form button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .list {
-      display: grid;
-      gap: 12px;
-    }
+    .list { display: grid; gap: 12px; }
 
     .item {
-      background: #101a14;
-      border: 1px solid #203e2e;
-      border-radius: 14px;
-      padding: 14px;
+      background: #101a14; border: 1px solid #203e2e; border-radius: 14px; padding: 14px;
     }
 
     .item-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: start;
-      margin-bottom: 8px;
+      display: flex; justify-content: space-between; gap: 12px; align-items: start; margin-bottom: 8px;
     }
 
-    .item strong {
-      font-size: 17px;
-      color: #f2fff7;
-    }
+    .item strong { font-size: 17px; color: #f2fff7; }
 
     .badge {
-      background: #143725;
-      color: #7dffb2;
-      border: 1px solid #2f6f4f;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      white-space: nowrap;
+      background: #143725; color: #7dffb2; border: 1px solid #2f6f4f;
+      padding: 6px 10px; border-radius: 999px; font-size: 12px; white-space: nowrap;
     }
 
     .item small {
-      color: #96b7a4;
-      display: block;
-      margin-top: 4px;
-      margin-bottom: 10px;
+      color: #96b7a4; display: block; margin-top: 4px; margin-bottom: 6px;
     }
 
     .remove-btn {
-      background: #2a1114;
-      border: 1px solid #6a2a35;
-      color: #ff9dac;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-    }
-
-    .remove-btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
+      background: #2a1114; border: 1px solid #6a2a35; color: #ff9dac;
+      padding: 10px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%;
     }
 
     .empty {
-      text-align: center;
-      padding: 24px;
-      border: 1px dashed #2b4c3a;
-      border-radius: 14px;
-      color: #91ad9e;
+      text-align: center; padding: 24px; border: 1px dashed #2b4c3a;
+      border-radius: 14px; color: #91ad9e;
     }
 
     @media (min-width: 768px) {
-      .stats {
-        grid-template-columns: repeat(5, 1fr);
-      }
-
-      .form {
-        grid-template-columns: 1fr 180px;
-      }
-
-      .remove-btn {
-        width: auto;
-      }
+      .stats { grid-template-columns: repeat(5, 1fr); }
+      .form { grid-template-columns: repeat(2, 1fr) 180px; }
+      .remove-btn { width: auto; }
     }
   </style>
 </head>
@@ -394,10 +207,7 @@
 
         <div id="roleBar" class="role-bar"></div>
 
-        <div class="form">
-          <input id="nome" placeholder="Digite o nome ou registro" />
-          <button id="addBtn" onclick="adicionar()">Adicionar</button>
-        </div>
+        <div id="formCampos" class="form"></div>
 
         <div id="lista" class="list"></div>
       </div>
@@ -443,6 +253,29 @@
       consulta: { senha: "123456", cargo: "Consulta", podeAdicionar: false, podeRemover: false }
     };
 
+    const camposPorAba = {
+      efetivos: [
+        { id: "nome", label: "Nome", placeholder: "Nome do efetivo" },
+        { id: "cargo", label: "Cargo", placeholder: "Cargo" }
+      ],
+      treinamentos: [
+        { id: "nome", label: "Treinamento", placeholder: "Nome do treinamento" },
+        { id: "instrutor", label: "Instrutor", placeholder: "Nome do instrutor" }
+      ],
+      apreensoes: [
+        { id: "item", label: "Item", placeholder: "Item apreendido" },
+        { id: "responsavel", label: "Responsável", placeholder: "Responsável" }
+      ],
+      recrutas: [
+        { id: "nome", label: "Nome", placeholder: "Nome do recruta" },
+        { id: "ingresso", label: "Ingresso", placeholder: "Data ou turma de ingresso" }
+      ],
+      saidas: [
+        { id: "nome", label: "Nome", placeholder: "Nome" },
+        { id: "motivo", label: "Motivo", placeholder: "Motivo da saída" }
+      ]
+    };
+
     function mostrarApp() {
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("appScreen").classList.remove("hidden");
@@ -473,12 +306,6 @@
         Adicionar: <strong>${usuarioAtual.podeAdicionar ? "sim" : "não"}</strong> |
         Remover: <strong>${usuarioAtual.podeRemover ? "sim" : "não"}</strong>
       `;
-
-      document.getElementById("addBtn").disabled = !usuarioAtual.podeAdicionar;
-      document.getElementById("nome").disabled = !usuarioAtual.podeAdicionar;
-      document.getElementById("nome").placeholder = usuarioAtual.podeAdicionar
-        ? "Digite o nome ou registro"
-        : "Seu perfil é somente leitura";
     }
 
     function atualizarEstatisticas() {
@@ -488,6 +315,61 @@
           if (el) el.innerText = snapshot.size;
         });
       });
+    }
+
+    function renderizarFormulario() {
+      const form = document.getElementById("formCampos");
+      const campos = camposPorAba[aba];
+      const bloqueado = !usuarioAtual?.podeAdicionar;
+
+      let html = "";
+      campos.forEach(campo => {
+        html += `<input id="campo-${campo.id}" placeholder="${bloqueado ? "Seu perfil é somente leitura" : campo.placeholder}" ${bloqueado ? "disabled" : ""} />`;
+      });
+
+      html += `<button id="addBtn" onclick="adicionar()" ${bloqueado ? "disabled" : ""}>Adicionar</button>`;
+      form.innerHTML = html;
+    }
+
+    function montarRegistro() {
+      const campos = camposPorAba[aba];
+      const registro = {
+        data: new Date().toLocaleString("pt-BR"),
+        criadoPor: usuarioAtual.usuario
+      };
+
+      for (const campo of campos) {
+        const valor = document.getElementById(`campo-${campo.id}`).value.trim();
+        if (!valor) {
+          alert(`Preencha o campo: ${campo.label}`);
+          return null;
+        }
+        registro[campo.id] = valor;
+      }
+
+      return registro;
+    }
+
+    function limparFormulario() {
+      const campos = camposPorAba[aba];
+      campos.forEach(campo => {
+        const el = document.getElementById(`campo-${campo.id}`);
+        if (el) el.value = "";
+      });
+    }
+
+    function resumoItem(item) {
+      if (aba === "efetivos") return `Cargo: ${item.cargo || "-"}`;
+      if (aba === "treinamentos") return `Instrutor: ${item.instrutor || "-"}`;
+      if (aba === "apreensoes") return `Responsável: ${item.responsavel || "-"}`;
+      if (aba === "recrutas") return `Ingresso: ${item.ingresso || "-"}`;
+      if (aba === "saidas") return `Motivo: ${item.motivo || "-"}`;
+      return "";
+    }
+
+    function tituloItem(item) {
+      if (aba === "apreensoes") return item.item || "-";
+      return item.nome || "-";
     }
 
     window.fazerLogin = function() {
@@ -507,6 +389,8 @@
         erro.classList.add("hidden");
         mostrarApp();
         atualizarRoleBar();
+        atualizarTitulo();
+        renderizarFormulario();
         carregarLista();
       } else {
         erro.classList.remove("hidden");
@@ -523,6 +407,7 @@
       aba = nova;
       atualizarBotaoAtivo(botao);
       atualizarTitulo();
+      renderizarFormulario();
       carregarLista();
     };
 
@@ -532,21 +417,11 @@
         return;
       }
 
-      const input = document.getElementById("nome");
-      const nome = input.value.trim();
+      const registro = montarRegistro();
+      if (!registro) return;
 
-      if (!nome) {
-        alert("Digite um nome ou registro.");
-        return;
-      }
-
-      await addDoc(collection(db, aba), {
-        nome,
-        data: new Date().toLocaleString("pt-BR"),
-        criadoPor: usuarioAtual.usuario
-      });
-
-      input.value = "";
+      await addDoc(collection(db, aba), registro);
+      limparFormulario();
     };
 
     window.remover = async function(id) {
@@ -580,7 +455,8 @@
             <div class="item">
               <div class="item-top">
                 <div>
-                  <strong>${item.nome}</strong>
+                  <strong>${tituloItem(item)}</strong>
+                  <small>${resumoItem(item)}</small>
                   <small>${item.data || ""}</small>
                   <small>Criado por: ${item.criadoPor || "sistema"}</small>
                 </div>
@@ -604,6 +480,7 @@
 
     atualizarTitulo();
     atualizarEstatisticas();
+    renderizarFormulario();
     carregarLista();
   </script>
 </body>
