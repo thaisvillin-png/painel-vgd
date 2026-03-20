@@ -18,6 +18,80 @@
       min-height: 100vh;
     }
 
+    .hidden {
+      display: none !important;
+    }
+
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: radial-gradient(circle at top, #13261c 0%, #08110c 55%);
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 420px;
+      background: #0d1611;
+      border: 1px solid #1b3527;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.28);
+    }
+
+    .login-box h1 {
+      color: #7dffb2;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .login-box p {
+      color: #9cb7a8;
+      margin-bottom: 18px;
+      font-size: 14px;
+    }
+
+    .login-box input {
+      width: 100%;
+      background: #09100c;
+      border: 1px solid #264836;
+      color: white;
+      padding: 14px;
+      border-radius: 12px;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    .login-box button {
+      width: 100%;
+      background: linear-gradient(180deg, #1d6f46, #145133);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    .login-error {
+      color: #ff98a8;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .demo {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #0a120d;
+      border: 1px solid #213f2f;
+      color: #9cb7a8;
+      font-size: 13px;
+    }
+
     .topbar {
       padding: 20px 16px;
       border-bottom: 1px solid #173124;
@@ -25,6 +99,15 @@
       position: sticky;
       top: 0;
       z-index: 10;
+    }
+
+    .topbar-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
     }
 
     .topbar h1 {
@@ -36,6 +119,17 @@
     .topbar p {
       color: #9db9aa;
       font-size: 14px;
+    }
+
+    .logout-btn {
+      border: 1px solid #315742;
+      background: #101b15;
+      color: #d6ffe4;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      white-space: nowrap;
     }
 
     .container {
@@ -223,40 +317,65 @@
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <h1>PAINEL OPERACIONAL</h1>
-    <p>Controle de efetivos, treinamentos, apreensões, recrutas e saídas</p>
+  <div id="loginScreen" class="login-screen">
+    <div class="login-box">
+      <h1>ACESSO AO PAINEL</h1>
+      <p>Entre com usuário e senha para acessar o sistema.</p>
+
+      <input id="loginUser" placeholder="Usuário" />
+      <input id="loginPass" type="password" placeholder="Senha" />
+      <button onclick="fazerLogin()">Entrar</button>
+
+      <div id="loginError" class="login-error hidden">Usuário ou senha inválidos.</div>
+
+      <div class="demo">
+        Usuário padrão: <strong>admin</strong><br>
+        Senha padrão: <strong>123456</strong>
+      </div>
+    </div>
   </div>
 
-  <div class="container">
-    <div class="stats">
-      <div class="card"><span>Efetivos</span><strong id="stat-efetivos">0</strong></div>
-      <div class="card"><span>Treinamentos</span><strong id="stat-treinamentos">0</strong></div>
-      <div class="card"><span>Apreensões</span><strong id="stat-apreensoes">0</strong></div>
-      <div class="card"><span>Recrutas</span><strong id="stat-recrutas">0</strong></div>
-      <div class="card"><span>Saídas</span><strong id="stat-saidas">0</strong></div>
+  <div id="appScreen" class="hidden">
+    <div class="topbar">
+      <div class="topbar-wrap">
+        <div>
+          <h1>PAINEL OPERACIONAL</h1>
+          <p>Controle de efetivos, treinamentos, apreensões, recrutas e saídas</p>
+        </div>
+        <button class="logout-btn" onclick="sair()">Sair</button>
+      </div>
     </div>
 
-    <div class="menu">
-      <button class="tab-btn active" onclick="mudar('efetivos', this)">Efetivos</button>
-      <button class="tab-btn" onclick="mudar('treinamentos', this)">Treinamentos</button>
-      <button class="tab-btn" onclick="mudar('apreensoes', this)">Apreensões</button>
-      <button class="tab-btn" onclick="mudar('recrutas', this)">Recrutas</button>
-      <button class="tab-btn" onclick="mudar('saidas', this)">Saídas</button>
-    </div>
-
-    <div class="panel">
-      <div class="panel-header">
-        <h2 id="titulo">EFETIVOS</h2>
-        <p id="subtitulo">Gerencie e acompanhe os registros desta categoria.</p>
+    <div class="container">
+      <div class="stats">
+        <div class="card"><span>Efetivos</span><strong id="stat-efetivos">0</strong></div>
+        <div class="card"><span>Treinamentos</span><strong id="stat-treinamentos">0</strong></div>
+        <div class="card"><span>Apreensões</span><strong id="stat-apreensoes">0</strong></div>
+        <div class="card"><span>Recrutas</span><strong id="stat-recrutas">0</strong></div>
+        <div class="card"><span>Saídas</span><strong id="stat-saidas">0</strong></div>
       </div>
 
-      <div class="form">
-        <input id="nome" placeholder="Digite o nome ou registro" />
-        <button onclick="adicionar()">Adicionar</button>
+      <div class="menu">
+        <button class="tab-btn active" onclick="mudar('efetivos', this)">Efetivos</button>
+        <button class="tab-btn" onclick="mudar('treinamentos', this)">Treinamentos</button>
+        <button class="tab-btn" onclick="mudar('apreensoes', this)">Apreensões</button>
+        <button class="tab-btn" onclick="mudar('recrutas', this)">Recrutas</button>
+        <button class="tab-btn" onclick="mudar('saidas', this)">Saídas</button>
       </div>
 
-      <div id="lista" class="list"></div>
+      <div class="panel">
+        <div class="panel-header">
+          <h2 id="titulo">EFETIVOS</h2>
+          <p id="subtitulo">Gerencie e acompanhe os registros desta categoria.</p>
+        </div>
+
+        <div class="form">
+          <input id="nome" placeholder="Digite o nome ou registro" />
+          <button onclick="adicionar()">Adicionar</button>
+        </div>
+
+        <div id="lista" class="list"></div>
+      </div>
     </div>
   </div>
 
@@ -290,6 +409,38 @@
       apreensoes: "Controle itens e registros de apreensão.",
       recrutas: "Acompanhe novos recrutas cadastrados.",
       saidas: "Histórico de desligamentos e saídas."
+    };
+
+    const USUARIO_PADRAO = "admin";
+    const SENHA_PADRAO = "123456";
+
+    function mostrarApp() {
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("appScreen").classList.remove("hidden");
+    }
+
+    function mostrarLogin() {
+      document.getElementById("appScreen").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
+    }
+
+    window.fazerLogin = function() {
+      const user = document.getElementById("loginUser").value.trim();
+      const pass = document.getElementById("loginPass").value.trim();
+      const erro = document.getElementById("loginError");
+
+      if (user === USUARIO_PADRAO && pass === SENHA_PADRAO) {
+        localStorage.setItem("painel_logado", "sim");
+        erro.classList.add("hidden");
+        mostrarApp();
+      } else {
+        erro.classList.remove("hidden");
+      }
+    };
+
+    window.sair = function() {
+      localStorage.removeItem("painel_logado");
+      mostrarLogin();
     };
 
     function atualizarBotaoAtivo(botao) {
@@ -368,6 +519,12 @@
           `;
         });
       });
+    }
+
+    if (localStorage.getItem("painel_logado") === "sim") {
+      mostrarApp();
+    } else {
+      mostrarLogin();
     }
 
     atualizarTitulo();
