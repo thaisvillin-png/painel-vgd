@@ -90,6 +90,7 @@
       border: 1px solid #213f2f;
       color: #9cb7a8;
       font-size: 13px;
+      line-height: 1.6;
     }
 
     .topbar {
@@ -213,6 +214,16 @@
       font-size: 14px;
     }
 
+    .role-bar {
+      margin-bottom: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #234634;
+      background: #0a120d;
+      color: #bdeccd;
+      font-size: 14px;
+    }
+
     .form {
       display: grid;
       grid-template-columns: 1fr;
@@ -238,6 +249,11 @@
       border-radius: 12px;
       font-weight: bold;
       cursor: pointer;
+    }
+
+    .form button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
     }
 
     .list {
@@ -293,6 +309,11 @@
       width: 100%;
     }
 
+    .remove-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
     .empty {
       text-align: center;
       padding: 24px;
@@ -320,7 +341,7 @@
   <div id="loginScreen" class="login-screen">
     <div class="login-box">
       <h1>ACESSO AO PAINEL</h1>
-      <p>Entre com usuário e senha para acessar o sistema.</p>
+      <p>Entre com seu usuário e senha.</p>
 
       <input id="loginUser" placeholder="Usuário" />
       <input id="loginPass" type="password" placeholder="Senha" />
@@ -329,8 +350,10 @@
       <div id="loginError" class="login-error hidden">Usuário ou senha inválidos.</div>
 
       <div class="demo">
-        Usuário padrão: <strong>admin</strong><br>
-        Senha padrão: <strong>123456</strong>
+        <strong>Logins disponíveis</strong><br>
+        admin / 123456<br>
+        operador / 123456<br>
+        consulta / 123456
       </div>
     </div>
   </div>
@@ -369,9 +392,11 @@
           <p id="subtitulo">Gerencie e acompanhe os registros desta categoria.</p>
         </div>
 
+        <div id="roleBar" class="role-bar"></div>
+
         <div class="form">
           <input id="nome" placeholder="Digite o nome ou registro" />
-          <button onclick="adicionar()">Adicionar</button>
+          <button id="addBtn" onclick="adicionar()">Adicionar</button>
         </div>
 
         <div id="lista" class="list"></div>
@@ -402,6 +427,7 @@
     const secoes = ["efetivos", "treinamentos", "apreensoes", "recrutas", "saidas"];
     let aba = "efetivos";
     let unsubscribeAtual = null;
+    let usuarioAtual = null;
 
     const descricoes = {
       efetivos: "Gerencie e acompanhe o efetivo operacional.",
@@ -411,8 +437,11 @@
       saidas: "Histórico de desligamentos e saídas."
     };
 
-    const USUARIO_PADRAO = "admin";
-    const SENHA_PADRAO = "123456";
+    const usuarios = {
+      admin: { senha: "123456", cargo: "Administrador", podeAdicionar: true, podeRemover: true },
+      operador: { senha: "123456", cargo: "Operador", podeAdicionar: true, podeRemover: false },
+      consulta: { senha: "123456", cargo: "Consulta", podeAdicionar: false, podeRemover: false }
+    };
 
     function mostrarApp() {
       document.getElementById("loginScreen").classList.add("hidden");
@@ -424,25 +453,6 @@
       document.getElementById("loginScreen").classList.remove("hidden");
     }
 
-    window.fazerLogin = function() {
-      const user = document.getElementById("loginUser").value.trim();
-      const pass = document.getElementById("loginPass").value.trim();
-      const erro = document.getElementById("loginError");
-
-      if (user === USUARIO_PADRAO && pass === SENHA_PADRAO) {
-        localStorage.setItem("painel_logado", "sim");
-        erro.classList.add("hidden");
-        mostrarApp();
-      } else {
-        erro.classList.remove("hidden");
-      }
-    };
-
-    window.sair = function() {
-      localStorage.removeItem("painel_logado");
-      mostrarLogin();
-    };
-
     function atualizarBotaoAtivo(botao) {
       document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
       botao.classList.add("active");
@@ -451,6 +461,24 @@
     function atualizarTitulo() {
       document.getElementById("titulo").innerText = aba.toUpperCase();
       document.getElementById("subtitulo").innerText = descricoes[aba];
+    }
+
+    function atualizarRoleBar() {
+      if (!usuarioAtual) return;
+
+      const roleBar = document.getElementById("roleBar");
+      roleBar.innerHTML = `
+        Usuário: <strong>${usuarioAtual.usuario}</strong> |
+        Cargo: <strong>${usuarioAtual.cargo}</strong> |
+        Adicionar: <strong>${usuarioAtual.podeAdicionar ? "sim" : "não"}</strong> |
+        Remover: <strong>${usuarioAtual.podeRemover ? "sim" : "não"}</strong>
+      `;
+
+      document.getElementById("addBtn").disabled = !usuarioAtual.podeAdicionar;
+      document.getElementById("nome").disabled = !usuarioAtual.podeAdicionar;
+      document.getElementById("nome").placeholder = usuarioAtual.podeAdicionar
+        ? "Digite o nome ou registro"
+        : "Seu perfil é somente leitura";
     }
 
     function atualizarEstatisticas() {
@@ -462,6 +490,35 @@
       });
     }
 
+    window.fazerLogin = function() {
+      const user = document.getElementById("loginUser").value.trim();
+      const pass = document.getElementById("loginPass").value.trim();
+      const erro = document.getElementById("loginError");
+
+      if (usuarios[user] && usuarios[user].senha === pass) {
+        usuarioAtual = {
+          usuario: user,
+          cargo: usuarios[user].cargo,
+          podeAdicionar: usuarios[user].podeAdicionar,
+          podeRemover: usuarios[user].podeRemover
+        };
+
+        localStorage.setItem("painel_usuario", JSON.stringify(usuarioAtual));
+        erro.classList.add("hidden");
+        mostrarApp();
+        atualizarRoleBar();
+        carregarLista();
+      } else {
+        erro.classList.remove("hidden");
+      }
+    };
+
+    window.sair = function() {
+      localStorage.removeItem("painel_usuario");
+      usuarioAtual = null;
+      mostrarLogin();
+    };
+
     window.mudar = function(nova, botao) {
       aba = nova;
       atualizarBotaoAtivo(botao);
@@ -470,6 +527,11 @@
     };
 
     window.adicionar = async function() {
+      if (!usuarioAtual || !usuarioAtual.podeAdicionar) {
+        alert("Seu perfil não tem permissão para adicionar.");
+        return;
+      }
+
       const input = document.getElementById("nome");
       const nome = input.value.trim();
 
@@ -480,13 +542,19 @@
 
       await addDoc(collection(db, aba), {
         nome,
-        data: new Date().toLocaleString("pt-BR")
+        data: new Date().toLocaleString("pt-BR"),
+        criadoPor: usuarioAtual.usuario
       });
 
       input.value = "";
     };
 
     window.remover = async function(id) {
+      if (!usuarioAtual || !usuarioAtual.podeRemover) {
+        alert("Seu perfil não tem permissão para remover.");
+        return;
+      }
+
       await deleteDoc(doc(db, aba, id));
     };
 
@@ -504,6 +572,9 @@
 
         snapshot.forEach((docu) => {
           const item = docu.data();
+          const botaoRemover = usuarioAtual?.podeRemover
+            ? `<button class="remove-btn" onclick="remover('${docu.id}')">Remover</button>`
+            : `<button class="remove-btn" disabled>Sem permissão para remover</button>`;
 
           lista.innerHTML += `
             <div class="item">
@@ -511,18 +582,22 @@
                 <div>
                   <strong>${item.nome}</strong>
                   <small>${item.data || ""}</small>
+                  <small>Criado por: ${item.criadoPor || "sistema"}</small>
                 </div>
                 <span class="badge">${aba.toUpperCase()}</span>
               </div>
-              <button class="remove-btn" onclick="remover('${docu.id}')">Remover</button>
+              ${botaoRemover}
             </div>
           `;
         });
       });
     }
 
-    if (localStorage.getItem("painel_logado") === "sim") {
+    const salvo = localStorage.getItem("painel_usuario");
+    if (salvo) {
+      usuarioAtual = JSON.parse(salvo);
       mostrarApp();
+      atualizarRoleBar();
     } else {
       mostrarLogin();
     }
