@@ -1,6 +1,48 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <h1>Painel carregando...</h1>
-  </body>
+<head>
+  <title>Painel Operacional</title>
+</head>
+
+<body style="background:#0a0f0c;color:#00ff88;font-family:Arial">
+
+<h1>PAINEL OPERACIONAL</h1>
+
+<input id="nome" placeholder="Nome" />
+<button onclick="adicionar()">Adicionar</button>
+
+<div id="lista"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD_6lK71tjgHEhejZ7hM70VTnElWA1pp_U",
+  authDomain: "paniel-892e5.firebaseapp.com",
+  projectId: "paniel-892e5"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.adicionar = async function () {
+  const nome = document.getElementById("nome").value;
+
+  await addDoc(collection(db, "efetivos"), {
+    nome: nome
+  });
+};
+
+onSnapshot(collection(db, "efetivos"), (snapshot) => {
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
+
+  snapshot.forEach((doc) => {
+    lista.innerHTML += `<p>${doc.data().nome}</p>`;
+  });
+});
+</script>
+
+</body>
 </html>
